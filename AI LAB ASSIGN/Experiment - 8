@@ -1,0 +1,78 @@
+from collections import deque
+
+def solve_water_jug(capacity_a, capacity_b, target):
+   
+    start_state = (0, 0)
+    
+   
+    queue = deque([start_state])
+    visited = {start_state}
+    
+    
+    parent = {start_state: None}
+    
+    found = False
+    final_state = None
+
+    while queue:
+        current = queue.popleft()
+        a, b = current
+        
+        
+        if a == target or b == target:
+            found = True
+            final_state = current
+            break
+            
+       
+        states = []
+        
+     
+        states.append((capacity_a, b))
+        
+        
+        states.append((a, capacity_b))
+        
+      
+        states.append((0, b))
+        
+        
+        states.append((a, 0))
+        
+       
+        amount_a_to_b = min(a, capacity_b - b)
+        states.append((a - amount_a_to_b, b + amount_a_to_b))
+        
+    
+        amount_b_to_a = min(b, capacity_a - a)
+        states.append((a + amount_b_to_a, b - amount_b_to_a))
+        
+
+        for new_state in states:
+            if new_state not in visited:
+                visited.add(new_state)
+                parent[new_state] = current
+                queue.append(new_state)
+
+ 
+    if found:
+        path = []
+        curr = final_state
+        while curr is not None:
+            path.append(curr)
+            curr = parent[curr]
+        path.reverse()
+        return path
+    else:
+        return None
+
+
+cap_A, cap_B, target_val = 4, 3, 2
+solution_path = solve_water_jug(cap_A, cap_B, target_val)
+
+if solution_path:
+    print(f"Steps to get {target_val} liters:")
+    for step, state in enumerate(solution_path):
+        print(f"Step {step}: Jug A = {state[0]}, Jug B = {state[1]}")
+else:
+    print("No solution possible.")
